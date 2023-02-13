@@ -1,2 +1,2 @@
 # microdata-crypt
-A repository for encrypt and decrypt dataset files.
+A repository to encrypt and decrypt dataset files.
