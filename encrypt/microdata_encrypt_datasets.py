@@ -1,3 +1,4 @@
+import argparse
 import os
 import shutil
 import sys
@@ -10,36 +11,56 @@ from cryptography.hazmat.primitives.asymmetric import padding
 
 """ microdata_encrypt_datasets.py
 
-This script expects one or more .csv files and the microdata public key to 
-reside within current directory.
-
-It encrypts all csv files placing them in ./encrypted 
+    Script to encrypt datasets, for each dataset
+        1. Generates the symmetric key for this dataet.
+        2. Encrypts the dataset using the symmetric key
+        3. Encrypts the symmetric key using the public rsa key.
 """
 
-current_dir = os.getcwd()
-encrypted_dir = f'{current_dir}/encrypted'
-microdata_public_key = f'{current_dir}/microdata_public_key.pem'
+parser = argparse.ArgumentParser(description='Encrypt datasets')
+parser.add_argument('-r', '--rsa_key_dir', help='The directory containing public key file microdata_public_key.pem')
+parser.add_argument('-d', '--dataset_dir', help='The directory containing the dataset files (csv) to encrypt (input).')
+parser.add_argument('-e', '--encrypted_dir', help='The directory containing the encrypted files (output).')
 
+args = parser.parse_args()
 
-def csv_files_in_current_dir():
-    all_files = os.listdir(current_dir)
-    return list(filter(lambda f: f.endswith('.csv'), all_files))
+if not (args.rsa_key_dir and args.dataset_dir and args.encrypted_dir):
+    print('All three arguments are expected. Please use -h')
+    raise SystemExit(1)
 
+rsa_key_dir = Path(args.rsa_key_dir)
+if not rsa_key_dir.exists():
+    print('Need to specify a directory containing the rsa keys.')
+    raise SystemExit(1)
 
-csv_files = csv_files_in_current_dir()
+dataset_dir = Path(args.dataset_dir)
+if not dataset_dir.exists():
+    print('Need to specify a directory containing the dataset files to encrypt.')
+    raise SystemExit(1)
+
+encrypted_dir = Path(args.encrypted_dir)
+if not os.path.exists(encrypted_dir):
+    os.makedirs(encrypted_dir)
+
+public_key_location = f'{rsa_key_dir}/microdata_public_key.pem'
+
+if not Path(public_key_location).is_file():
+    print('microdata_public_key.pem not found.')
+    raise SystemExit(1)
+
+# Read public key from file
+with open(public_key_location, "rb") as key_file:
+    public_key = serialization.load_pem_public_key(
+        key_file.read(),
+        backend=default_backend()
+    )
+
+all_files = os.listdir(dataset_dir)
+csv_files = list(filter(lambda f: f.endswith('.csv'), all_files))
 
 if len(csv_files) == 0:
-    print('No csv files found in current directory.')
+    print(f'No csv files found in {dataset_dir}.')
     sys.exit()
-
-path = Path(microdata_public_key)
-if not path.is_file():
-    print('No public key from microdata found in current directory.')
-    sys.exit()
-
-if os.path.exists(encrypted_dir):
-    shutil.rmtree(encrypted_dir)
-os.makedirs(encrypted_dir)
 
 for csv_file in csv_files:
     variable_name = csv_file.split(".")[0]
@@ -51,7 +72,7 @@ for csv_file in csv_files:
     symkey = Fernet.generate_key()
 
     # Encrypt csv file
-    with open(csv_file, 'rb') as f:
+    with open(f'{dataset_dir}/{csv_file}', 'rb') as f:
         data = f.read()  # Read the bytes of the input file
 
     fernet = Fernet(symkey)
@@ -61,13 +82,6 @@ for csv_file in csv_files:
         f.write(encrypted)
 
     print(f'Csv file {csv_file} encrypted into  {encrypted_file}')
-
-    # Read public key from file
-    with open(microdata_public_key, "rb") as key_file:
-        public_key = serialization.load_pem_public_key(
-            key_file.read(),
-            backend=default_backend()
-        )
 
     encrypted_sym_key = public_key.encrypt(
         symkey,
@@ -84,3 +98,5 @@ for csv_file in csv_files:
 
     print(f'Key file for {csv_file} encrypted into  {encrypted_symkey_file}')
     print("\n")
+
+print('Encryption done!')
