@@ -2,10 +2,14 @@ import argparse
 import os
 from pathlib import Path
 
-from cryptography.hazmat.primitives import serialization
-
 from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
+
+""" create_rsa_keys.py
+
+    Script to create public and private rsa keys.
+"""
 
 parser = argparse.ArgumentParser(description='Generate RSA keys')
 parser.add_argument('-r', '--rsa_key_dir', help='The directory to place the generated keys.')
@@ -15,10 +19,6 @@ args = parser.parse_args()
 rsa_key_dir = Path(args.rsa_key_dir)
 if not os.path.exists(rsa_key_dir):
     os.makedirs(rsa_key_dir)
-
-if not rsa_key_dir.exists():
-    print('Need to specify a directory containing the rsa keys.')
-    raise SystemExit(1)
 
 private_key = rsa.generate_private_key(
     public_exponent=65537,
