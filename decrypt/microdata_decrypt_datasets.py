@@ -28,23 +28,22 @@ if not (args.rsa_key_dir and args.encrypted_dir and args.decrypted_dir):
 
 rsa_key_dir = Path(args.rsa_key_dir)
 if not rsa_key_dir.exists():
-    print('Need to specify a directory holding the rsa keys.')
+    print('Need to specify a directory containing the rsa keys.')
     raise SystemExit(1)
 
 encrypted_dir = Path(args.encrypted_dir)
 if not encrypted_dir.exists():
-    print('Need to specify a directory holding the encrypted files.')
+    print('Need to specify a directory containing the encrypted files.')
     raise SystemExit(1)
 
 decrypted_dir = Path(args.decrypted_dir)
-if not decrypted_dir.exists():
-    print('Need to specify a directory to place the decrypted files.')
-    raise SystemExit(1)
+if not os.path.exists(decrypted_dir):
+    os.makedirs(decrypted_dir)
 
 private_key_location = f'{rsa_key_dir}/microdata_private_key.pem'
 
 if not Path(private_key_location).is_file():
-    print('Not able to find microdata_private_key.pem.')
+    print('microdata_private_key.pem not found.')
     raise SystemExit(1)
 
 
@@ -56,14 +55,12 @@ with open(private_key_location, "rb") as key_file:
         backend=default_backend()
     )
 
+all_files = os.listdir(encrypted_dir)
+csv_files = list(filter(lambda f: f.endswith('.csv.encr'), all_files))
 
-def encrypted_csv_files():
-    all_files = os.listdir(encrypted_dir)
-    return list(filter(lambda f: f.endswith('.csv.encr'), all_files))
-
-
-csv_files = encrypted_csv_files()
-
+if len(csv_files) == 0:
+    print(f'No csv.encr files found in {encrypted_dir}.')
+    raise SystemExit(1)
 
 for csv_file in csv_files:
     variable_name = csv_file.split(".")[0]
