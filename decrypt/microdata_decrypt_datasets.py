@@ -1,4 +1,6 @@
+import argparse
 import os
+from pathlib import Path
 
 from cryptography.fernet import Fernet, InvalidToken
 from cryptography.hazmat.backends import default_backend
@@ -8,14 +10,56 @@ from cryptography.hazmat.primitives.asymmetric import padding
 
 """ microdata_decrypt_datasets.py
 
-This script ...
+    python microdata_decrypt_datasets.py --rsa_key_dir --encrypted_dir --decrypted_dir
 
-It decrypts all csv files placed in ./encrypted 
+    Parameters
+    ----------
+    rsa_key_dir : The directory containing private key file microdata_private_key.pem
+    encrypted_dir : The directory containing the encrypted files (input).
+    decrypted_dir : The directory containing the decrypted files (output).
+
 """
 
-rsa_dir = '/Users/vak/projects/github/M.2.0/microdata-crypt/rsa'
-encrypted_dir = '/Users/vak/projects/github/M.2.0/microdata-crypt/encrypt/encrypted'
-decrypted_dir = '/Users/vak/projects/github/M.2.0/microdata-crypt/decrypt/decrypted'
+parser = argparse.ArgumentParser(description='Decrypt datasets')
+parser.add_argument('--rsa_key_dir')
+parser.add_argument('--encrypted_dir')
+parser.add_argument('--decrypted_dir')
+
+args = parser.parse_args()
+
+if not (args.rsa_key_dir and args.encrypted_dir and args.decrypted_dir):
+    print('All three arguments are expected. Please use -h')
+    raise SystemExit(1)
+
+rsa_key_dir = Path(args.rsa_key_dir)
+if not rsa_key_dir.exists():
+    print('Need to specify a directory holding the rsa keys.')
+    raise SystemExit(1)
+
+encrypted_dir = Path(args.encrypted_dir)
+if not encrypted_dir.exists():
+    print('Need to specify a directory holding the encrypted files.')
+    raise SystemExit(1)
+
+decrypted_dir = Path(args.decrypted_dir)
+if not decrypted_dir.exists():
+    print('Need to specify a directory to place the decrypted files.')
+    raise SystemExit(1)
+
+private_key_location = f'{rsa_key_dir}/microdata_private_key.pem'
+
+if not Path(private_key_location).is_file():
+    print('Not able to find microdata_private_key.pem.')
+    raise SystemExit(1)
+
+
+# Reads private key from file
+with open(private_key_location, "rb") as key_file:
+    private_key = serialization.load_pem_private_key(
+        key_file.read(),
+        password=None,
+        backend=default_backend()
+    )
 
 
 def encrypted_csv_files():
@@ -25,18 +69,9 @@ def encrypted_csv_files():
 
 csv_files = encrypted_csv_files()
 
-print(csv_files)
 
 for csv_file in csv_files:
     variable_name = csv_file.split(".")[0]
-
-    # Reads privet key from file
-    with open(f'{rsa_dir}/microdata_private_key.pem', "rb") as key_file:
-        private_key = serialization.load_pem_private_key(
-            key_file.read(),
-            password=None,
-            backend=default_backend()
-        )
 
     # decrypt symkey
     encrypted_symkey = f'{encrypted_dir}/{variable_name}.symkey.encr'
@@ -52,18 +87,18 @@ for csv_file in csv_files:
         )
     )
 
-    print(f'decrypted symkey for {variable_name}: {decrypted_symkey}')
-
     # decrypt csv file
     with open(f'{encrypted_dir}/{csv_file}', 'rb') as f:
-        data = f.read()  # Read the bytes of the encrypted file
+        data = f.read()
 
     fernet = Fernet(decrypted_symkey)
     try:
         decrypted = fernet.decrypt(data)
         with open(f'{decrypted_dir}/{variable_name}.csv', 'wb') as f:
-            f.write(decrypted)  # Write the decrypted bytes to the output file
-
-    # Note: You can delete input_file here if you want
+            f.write(decrypted)
     except InvalidToken as e:
         print(f'ERROR : {variable_name} : Invalid Key - Unsuccessfully decrypted')
+
+    print(f'Decrypted {csv_file}')
+
+print('Decryption done!')
