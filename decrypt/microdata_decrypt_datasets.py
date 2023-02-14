@@ -10,20 +10,15 @@ from cryptography.hazmat.primitives.asymmetric import padding
 
 """ microdata_decrypt_datasets.py
 
-    python microdata_decrypt_datasets.py --rsa_key_dir --encrypted_dir --decrypted_dir
-
-    Parameters
-    ----------
-    rsa_key_dir : The directory containing private key file microdata_private_key.pem
-    encrypted_dir : The directory containing the encrypted files (input).
-    decrypted_dir : The directory containing the decrypted files (output).
-
+    Script to decrypt datasets, for each dataset
+        1. Decrypts the symmetric key using the private key.
+        2. Decrypts the dataset file using the symmetric key.
 """
 
 parser = argparse.ArgumentParser(description='Decrypt datasets')
-parser.add_argument('--rsa_key_dir')
-parser.add_argument('--encrypted_dir')
-parser.add_argument('--decrypted_dir')
+parser.add_argument('-r', '--rsa_key_dir', help='The directory containing private key file microdata_private_key.pem')
+parser.add_argument('-e', '--encrypted_dir', help='The directory containing the encrypted files (input).')
+parser.add_argument('-d', '--decrypted_dir', help='The directory containing the decrypted files (output).')
 
 args = parser.parse_args()
 
