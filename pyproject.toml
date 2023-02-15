@@ -2,7 +2,7 @@
 name = "microdata-crypt"
 version = "0.1.0"
 description = ""
-authors = ["Kalantzakos, Vassilios <Vassilios.Kalantzakos@ssb.no>"]
+authors = ["Kalantzakos, Vassilios <microdata-dev@ssb.no>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
