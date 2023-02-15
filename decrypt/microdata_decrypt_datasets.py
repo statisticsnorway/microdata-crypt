@@ -53,8 +53,7 @@ with open(private_key_location, "rb") as key_file:
         backend=default_backend()
     )
 
-all_files = os.listdir(encrypted_dir)
-csv_files = list(filter(lambda f: f.endswith('.csv.encr'), all_files))
+csv_files = [file for file in os.listdir(encrypted_dir) if file.endswith('.csv.encr')]
 
 if len(csv_files) == 0:
     print(f'No csv.encr files found in {encrypted_dir}.')

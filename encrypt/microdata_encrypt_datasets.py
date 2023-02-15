@@ -54,8 +54,7 @@ with open(public_key_location, "rb") as key_file:
         backend=default_backend()
     )
 
-all_files = os.listdir(dataset_dir)
-csv_files = list(filter(lambda f: f.endswith('.csv'), all_files))
+csv_files = [file for file in os.listdir(dataset_dir) if file.endswith('.csv')]
 
 if len(csv_files) == 0:
     print(f'No csv files found in {dataset_dir}.')
