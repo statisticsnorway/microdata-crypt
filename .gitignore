@@ -1,0 +1,16 @@
+.idea
+
+# Mac OS
+.DS_Store
+
+# RSA key extension
+*$.pem
+
+# Encrypted file extensions
+**/*.encr
+
+# Test dirs
+
+test/encrypted/*
+test/decrypted/*
+test/rsa/*
