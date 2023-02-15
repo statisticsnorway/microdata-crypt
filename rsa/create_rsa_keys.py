@@ -12,7 +12,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 """
 
 parser = argparse.ArgumentParser(description='Generate RSA keys')
-parser.add_argument('-r', '--rsa_key_dir', help='The directory to place the generated keys.')
+parser.add_argument('-r', '--rsa_key_dir', help='The directory to place the generated keys.', required=True)
 
 args = parser.parse_args()
 

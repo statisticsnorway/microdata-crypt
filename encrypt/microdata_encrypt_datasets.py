@@ -18,15 +18,14 @@ from cryptography.hazmat.primitives.asymmetric import padding
 """
 
 parser = argparse.ArgumentParser(description='Encrypt datasets')
-parser.add_argument('-r', '--rsa_key_dir', help='The directory containing public key file microdata_public_key.pem')
-parser.add_argument('-d', '--dataset_dir', help='The directory containing the dataset files (csv) to encrypt (input).')
-parser.add_argument('-e', '--encrypted_dir', help='The directory containing the encrypted files (output).')
+parser.add_argument('-r', '--rsa_key_dir', help='The directory containing public key file microdata_public_key.pem',
+                    required=True)
+parser.add_argument('-d', '--dataset_dir', help='The directory containing the dataset files (csv) to encrypt (input).',
+                    required=True)
+parser.add_argument('-e', '--encrypted_dir', help='The directory containing the encrypted files (output).',
+                    required=True)
 
 args = parser.parse_args()
-
-if not (args.rsa_key_dir and args.dataset_dir and args.encrypted_dir):
-    print('All three arguments are expected. Please use -h')
-    raise SystemExit(1)
 
 rsa_key_dir = Path(args.rsa_key_dir)
 if not rsa_key_dir.exists():

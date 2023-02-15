@@ -16,15 +16,14 @@ from cryptography.hazmat.primitives.asymmetric import padding
 """
 
 parser = argparse.ArgumentParser(description='Decrypt datasets')
-parser.add_argument('-r', '--rsa_key_dir', help='The directory containing private key file microdata_private_key.pem')
-parser.add_argument('-e', '--encrypted_dir', help='The directory containing the encrypted files (input).')
-parser.add_argument('-d', '--decrypted_dir', help='The directory containing the decrypted files (output).')
+parser.add_argument('-r', '--rsa_key_dir', help='The directory containing private key file microdata_private_key.pem',
+                    required=True)
+parser.add_argument('-e', '--encrypted_dir', help='The directory containing the encrypted files (input).',
+                    required=True)
+parser.add_argument('-d', '--decrypted_dir', help='The directory containing the decrypted files (output).',
+                    required=True)
 
 args = parser.parse_args()
-
-if not (args.rsa_key_dir and args.encrypted_dir and args.decrypted_dir):
-    print('All three arguments are expected. Please use -h')
-    raise SystemExit(1)
 
 rsa_key_dir = Path(args.rsa_key_dir)
 if not rsa_key_dir.exists():
@@ -45,7 +44,6 @@ private_key_location = f'{rsa_key_dir}/microdata_private_key.pem'
 if not Path(private_key_location).is_file():
     print('microdata_private_key.pem not found.')
     raise SystemExit(1)
-
 
 # Reads private key from file
 with open(private_key_location, "rb") as key_file:
