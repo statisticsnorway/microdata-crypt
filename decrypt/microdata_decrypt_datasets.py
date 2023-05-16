@@ -97,7 +97,7 @@ for csv_file in csv_files:
         decrypted = fernet.decrypt(data)
         with open(f"{decrypted_dir}/{variable_name}.csv", "wb") as f:
             f.write(decrypted)
-    except InvalidToken as e:
+    except InvalidToken:
         print(
             f"ERROR : {variable_name} : Invalid Key - Unsuccessfully decrypted"
         )

@@ -9,6 +9,7 @@ python = "^3.10"
 cryptography = "^40.0.0"
 
 [tool.poetry.group.dev.dependencies]
+ruff = "^0.0.267"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
