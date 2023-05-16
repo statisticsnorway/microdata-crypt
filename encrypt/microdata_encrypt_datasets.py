@@ -12,7 +12,7 @@ from cryptography.hazmat.primitives.asymmetric import padding
 """ microdata_encrypt_datasets.py
 
     Script to encrypt datasets, for each dataset
-        1. Generates the symmetric key for this dataet.
+        1. Generates the symmetric key for this dataset.
         2. Encrypts the dataset using the symmetric key
         3. Encrypts the symmetric key using the public rsa key.
 """
