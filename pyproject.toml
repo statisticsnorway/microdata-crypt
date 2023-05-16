@@ -6,7 +6,7 @@ authors = ["Kalantzakos, Vassilios <microdata-dev@ssb.no>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-cryptography = "^39.0.1"
+cryptography = "^40.0.0"
 
 [tool.poetry.group.dev.dependencies]
 
