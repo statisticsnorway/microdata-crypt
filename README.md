@@ -1,89 +1,66 @@
 # microdata-crypt
-A repository to encrypt and decrypt dataset files based on Python cryptography package.
+A repository to package datasets based on Python cryptography package.
+The datasets will be encrypted and packaged as tar archives. The process is as follows:
 
-This project consists of 4 python scripts:
+1. Generate the symmetric key for a dataset.
+2. Encrypt the dataset data (CSV) using the symmetric key and store the encrypted file as `<DATASET_NAME>.csv.encr`
+3. Encrypt the symmetric key using the asymmetric rsa public key and store the encrypted file as `<DATASET_NAME>.symkey.encr`
 
----
-### microdata_encrypt_datasets.py
+## Usage
 
-Script to encrypt datasets, for each dataset:
+Once you have your metadata and data files ready to go, they should be named and stored like this:
+```
+my-input-directory/
+    MY_DATASET_NAME/
+        MY_DATASET_NAME.csv
+        MY_DATASET_NAME.json
+```
 
-1. Generates the symmetric key for this dataset.
-2. Encrypts dataset using the symmetric key and stores the encrypted file as `<VARIABLE_NAME>.encr`
-3. Encrypts symmetric key using the asymmetric rsa public key and stores the encrypted file as `<VARIABLE_NAME>.symkey.encr`
-
----
-### microdata_decrypt_datasets.py
-
-Script to decrypt datasets, for each dataset:
-
-1. Decrypts symmetric key file (`<VARIABLE_NAME>.symkey.encr`) using the asymmetric rsa private key.
-2. Decrypts dataset file using the symmetric key and stores the decrypted dataset in `<VARIABLE_NAME>.csv`
-
----
-### create_rsa_keys.py
-
-This is a utility to create asymmetric public and private RSA key files for testing purposes:
-
-- microdata_public_key.pem
-- microdata_private_key.pem
-
----
-### create_tar_file.py
-
-This is a utility to pack the encrypted files into a tar file prior to uploading to a server.
-
-It expects the directory holding the encrypted files and includes only files with extension `.encr` into the tar file.
-
-
----
-## Try it yourself
-
-You need to install the python cryptography package first:
+Then use pip to install cryptography package:
 ```
 python3 -m pip install cryptography
 ```
 
-Test dataset files are provided in `/microdata-crypt/test/dataset`
+In your Python script you can then write:
+```py
+from pathlib import Path
+from microdata_crypt import package_dataset
+from microdata_crypt.utils import create_rsa_keys
 
-##### Create the rsa keys:
-```
-cd /microdata-crypt
-python3 rsa/create_rsa_keys.py -r test/rsa
-```
-The keys are now located in `/microdata-crypt/test/rsa`.
-This directory is created if does not exist.
+RSA_KEYS_DIRECTORY = Path("tests/resources/rsa_keys")
+DATASET_DIRECTORY = Path("tests/resources/input/DATASET_1")
+OUTPUT_DIRECTORY = Path("tests/resources/output")
 
-##### Encrypt:
+# Create RSA private and public keys for testing purposes
+create_rsa_keys(target_dir=RSA_KEYS_DIRECTORY)
+
+package_dataset(
+    rsa_keys_dir=RSA_KEYS_DIRECTORY,
+    dataset_dir=DATASET_DIRECTORY,
+    output_dir=OUTPUT_DIRECTORY,
+)
 ```
-python3 encrypt/microdata_encrypt_datasets.py -r test/rsa -d test/dataset -e test/encrypted 
+and run the script (assuming the script is located in the root directory of this project):
+```
+python my-script.py
 ```
 
-The encrypted files are now located in `/microdata-crypt/test/encrypted`.
-This directory is created if does not exist.
+You can also use the `package_datasets` function that will package many datasets at once:
+```py
+package_datasets(
+    rsa_keys_dir=RSA_KEYS_DIRECTORY,
+    datasets_dir=DATASETS_DIRECTORY,
+    output_dir=OUTPUT_DIRECTORY,
+)
+```
 
-##### Decrypt:
+As an additional function, you can also decrypt the encrypted dataset:
+```py
+decrypt_dataset(
+    rsa_keys_dir=RSA_KEYS_DIRECTORY,
+    input_dir=OUTPUT_DIRECTORY / "DATASET_1",
+    output_dir=decrypted_dir,
+)
 ```
-python3 decrypt/microdata_decrypt_datasets.py -r test/rsa -e test/encrypted -d test/decrypted
-```
-The decrypted files are now located in `/microdata-crypt/test/decrypted`.
-This directory is created if does not exist.
 
-You may observe that the decrypted files are identical to the original files in `test/dataset`.
-
-##### Tar:
-```
-python3 tar/create_tar_file.py -d test/encrypted
-```
-Response:
-```
-Archive my_tar_file.tar created.
-```
-OR
-```
-python3 tar/create_tar_file.py -d test/encrypted -n my_preffered_name
-```
-Response:
-```
-Archive my_preffered_name.tar created.
-```
+Please check the function documentation of `create_rsa_keys`, `package_dataset(s)` and `decrypt_dataset` for more details.
