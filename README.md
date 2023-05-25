@@ -5,6 +5,7 @@ The datasets will be encrypted and packaged as tar archives. The process is as f
 1. Generate the symmetric key for a dataset.
 2. Encrypt the dataset data (CSV) using the symmetric key and store the encrypted file as `<DATASET_NAME>.csv.encr`
 3. Encrypt the symmetric key using the asymmetric rsa public key and store the encrypted file as `<DATASET_NAME>.symkey.encr`
+4. Gather the encrypted CSV, encrypted symmetric key and metadata (JSON) file in one tar file.
 
 ## Usage
 
