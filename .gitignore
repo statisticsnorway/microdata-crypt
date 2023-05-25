@@ -3,6 +3,7 @@
 .python-version
 # Mac OS
 .DS_Store
+.coverage
 
 # RSA key extension
 *$.pem
