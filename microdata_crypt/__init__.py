@@ -42,6 +42,34 @@ def package_dataset(
     tar_dataset(input_dir=output_dir, dataset_name=dataset_name)
 
 
+def package_datasets(
+    rsa_keys_dir: Path,
+    datasets_dir: Path,
+    output_dir: Path,
+) -> None:
+    """
+    Encrypt multiple datasets and tar the resulting files.
+    Only the CSV file will be encrypted.
+
+    :param rsa_key_dir: directory containing public key file microdata_public_key.pem
+    :param datasets_dir: directory containing the datasets
+    :param output_dir: directory to encrypt to
+    :return: None
+    """
+    if not datasets_dir.exists():
+        print("The directory containing the datasets has to exist")
+        raise SystemExit(1)
+    for dataset in datasets_dir.iterdir():
+        if not datasets_dir.is_dir():
+            print(f"{datasets_dir} is not a directory")
+            raise SystemExit(1)
+        package_dataset(
+            rsa_keys_dir=rsa_keys_dir,
+            dataset_dir=dataset,
+            output_dir=output_dir,
+        )
+
+
 def decrypt_dataset(
     rsa_keys_dir: Path, input_dir: Path, output_dir: Path
 ) -> None:
@@ -57,11 +85,11 @@ def decrypt_dataset(
     """
 
     if not rsa_keys_dir.exists():
-        print("The RSA keys directory has to exist.")
+        print("The RSA keys directory has to exist")
         raise SystemExit(1)
 
     if not input_dir.exists():
-        print("The directory containing the encrypted files has to exist.")
+        print("The directory containing the encrypted files has to exist")
         raise SystemExit(1)
 
     if not output_dir.exists():
@@ -70,7 +98,7 @@ def decrypt_dataset(
     private_key_location = rsa_keys_dir / "microdata_private_key.pem"
 
     if not private_key_location.is_file():
-        print(f"{private_key_location} not found.")
+        print(f"{private_key_location} not found")
         raise SystemExit(1)
 
     # Reads private key from file

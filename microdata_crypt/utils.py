@@ -1,4 +1,5 @@
 import os
+import shutil
 import tarfile
 from pathlib import Path
 
@@ -10,6 +11,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 def tar_dataset(input_dir: Path, dataset_name: str) -> None:
     """
     Creates a tar file from encrypted dataset files.
+    Removes the input directory after successful completion.
     :param input_dir: the input directory containing the dataset directory
     :param dataset_name: the name of the dataset
     """
@@ -19,7 +21,7 @@ def tar_dataset(input_dir: Path, dataset_name: str) -> None:
         raise SystemExit(1)
 
     if len(list((input_dir / dataset_name).iterdir())) == 0:
-        print(f"No files found in {input_dir / dataset_name}.")
+        print(f"No files found in {input_dir / dataset_name}")
         raise SystemExit(1)
 
     tar_file_name = f"{dataset_name}.tar"
@@ -38,10 +40,11 @@ def tar_dataset(input_dir: Path, dataset_name: str) -> None:
     with tarfile.open(full_tar_file_name, "w") as tar:
         for file in files_to_tar:
             if file.exists():
-                print(f"Adding {file} to tar...")
+                print(f"Adding {file} to tar..")
                 tar.add(file, arcname=file.name)
 
-    print(f"Archive {full_tar_file_name} created.")
+    shutil.rmtree(input_dir / dataset_name)
+    print(f"Archive {full_tar_file_name} created")
 
 
 def create_rsa_keys(target_dir: Path) -> None:

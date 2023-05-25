@@ -19,7 +19,7 @@ def encrypt_dataset(
     """
 
     if not rsa_keys_dir.exists():
-        print("The RSA keys directory has to exist.")
+        print("The RSA keys directory has to exist")
         raise SystemExit(1)
 
     if not dataset_dir.exists():
@@ -34,7 +34,7 @@ def encrypt_dataset(
     public_key_location = rsa_keys_dir / "microdata_public_key.pem"
 
     if not public_key_location.is_file():
-        print(f"Public key {public_key_location} not found.")
+        print(f"Public key {public_key_location} not found")
         raise SystemExit(1)
 
     # Read public key from file
@@ -48,11 +48,11 @@ def encrypt_dataset(
     ]
 
     if len(csv_files) == 0:
-        print(f"No csv files found in {dataset_dir}.")
+        print(f"No csv files found in {dataset_dir}")
         raise SystemExit(1)
 
     if len(csv_files) > 1:
-        print(f"There should only be one csv file in {dataset_dir}.")
+        print(f"There should only be one csv file in {dataset_dir}")
         raise SystemExit(1)
 
     csv_file = csv_files[0]

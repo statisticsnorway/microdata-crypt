@@ -24,18 +24,20 @@ def test_package_dataset():
 
     package_dataset(
         rsa_keys_dir=RSA_KEYS_DIRECTORY,
-        dataset_dir=Path(f"{INPUT_DIRECTORY}/VARIABLE_1"),
+        dataset_dir=Path(f"{INPUT_DIRECTORY}/DATASET_1"),
         output_dir=OUTPUT_DIRECTORY,
     )
 
-    result_file = OUTPUT_DIRECTORY / "VARIABLE_1.tar"
+    result_file = OUTPUT_DIRECTORY / "DATASET_1.tar"
     assert result_file.exists()
+
+    assert not Path(OUTPUT_DIRECTORY / "DATASET_1").exists()
 
     with tarfile.open(result_file, "r:") as tar:
         tarred_files = [file.name for file in tar.getmembers()]
-        assert "VARIABLE_1.csv.encr" in tarred_files
-        assert "VARIABLE_1.symkey.encr" in tarred_files
-        assert "VARIABLE_1.json" in tarred_files
+        assert "DATASET_1.csv.encr" in tarred_files
+        assert "DATASET_1.symkey.encr" in tarred_files
+        assert "DATASET_1.json" in tarred_files
 
 
 def test_decrypt_dataset():
@@ -43,19 +45,22 @@ def test_decrypt_dataset():
 
     package_dataset(
         rsa_keys_dir=RSA_KEYS_DIRECTORY,
-        dataset_dir=Path(f"{INPUT_DIRECTORY}/VARIABLE_1"),
+        dataset_dir=Path(f"{INPUT_DIRECTORY}/DATASET_1"),
         output_dir=OUTPUT_DIRECTORY,
     )
+
+    with tarfile.open(Path(OUTPUT_DIRECTORY / "DATASET_1.tar")) as tar:
+        tar.extractall(path=Path(OUTPUT_DIRECTORY / "DATASET_1"))
 
     decrypted_dir = OUTPUT_DIRECTORY / "decrypted"
     decrypt_dataset(
         rsa_keys_dir=RSA_KEYS_DIRECTORY,
-        input_dir=OUTPUT_DIRECTORY / "VARIABLE_1",
+        input_dir=OUTPUT_DIRECTORY / "DATASET_1",
         output_dir=decrypted_dir,
     )
     assert decrypted_dir.exists()
 
     assert (
-        Path(decrypted_dir / "VARIABLE_1.csv").stat().st_size
-        == Path(INPUT_DIRECTORY / "VARIABLE_1/VARIABLE_1.csv").stat().st_size
+        Path(decrypted_dir / "DATASET_1.csv").stat().st_size
+        == Path(INPUT_DIRECTORY / "DATASET_1/DATASET_1.csv").stat().st_size
     )
