@@ -2,7 +2,7 @@ from pathlib import Path
 import shutil
 import tarfile
 
-from microdata_crypt import decrypt_dataset, package_dataset
+from microdata_crypt import decrypt_dataset, package_dataset, package_datasets
 from microdata_crypt.utils import create_rsa_keys
 
 RSA_KEYS_DIRECTORY = Path("tests/resources/rsa_keys")
@@ -38,6 +38,21 @@ def test_package_dataset():
         assert "DATASET_1.csv.encr" in tarred_files
         assert "DATASET_1.symkey.encr" in tarred_files
         assert "DATASET_1.json" in tarred_files
+
+
+def test_package_datasets():
+    create_rsa_keys(target_dir=RSA_KEYS_DIRECTORY)
+
+    package_datasets(
+        rsa_keys_dir=RSA_KEYS_DIRECTORY,
+        datasets_dir=Path(f"{INPUT_DIRECTORY}"),
+        output_dir=OUTPUT_DIRECTORY,
+    )
+
+    assert Path(OUTPUT_DIRECTORY / "DATASET_1.tar").exists()
+    assert Path(OUTPUT_DIRECTORY / "DATASET_2.tar").exists()
+    assert not Path(OUTPUT_DIRECTORY / "DATASET_1").exists()
+    assert not Path(OUTPUT_DIRECTORY / "DATASET_2").exists()
 
 
 def test_decrypt_dataset():
