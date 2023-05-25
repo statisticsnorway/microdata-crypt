@@ -60,7 +60,8 @@ def encrypt_dataset(
 
     if dataset_name != dataset_dir.stem:
         print(
-            f"The csv file name {dataset_name} should match the dataset directory name {dataset_dir.stem}."
+            f"The csv file name {dataset_name} should match "
+            f"the dataset directory name {dataset_dir.stem}."
         )
         raise SystemExit(1)
 
@@ -74,14 +75,14 @@ def encrypt_dataset(
     symkey = Fernet.generate_key()
 
     # Encrypt csv file
-    with open(csv_file, "rb") as f:
-        data = f.read()  # Read the bytes of the input file
+    with open(csv_file, "rb") as file:
+        data = file.read()  # Read the bytes of the input file
 
     fernet = Fernet(symkey)
     encrypted = fernet.encrypt(data)
 
-    with open(encrypted_file, "wb") as f:
-        f.write(encrypted)
+    with open(encrypted_file, "wb") as file:
+        file.write(encrypted)
 
     print(f"Csv file {csv_file} encrypted into {encrypted_file}")
 
@@ -95,8 +96,8 @@ def encrypt_dataset(
     )
 
     # Store encrypted symkey to file
-    with open(encrypted_symkey_file, "wb") as f:
-        f.write(encrypted_sym_key)
+    with open(encrypted_symkey_file, "wb") as file:
+        file.write(encrypted_sym_key)
 
     print(f"Key file for {csv_file} encrypted into {encrypted_symkey_file}")
     print("Encryption done!")

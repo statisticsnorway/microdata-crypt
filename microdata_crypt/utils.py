@@ -69,8 +69,8 @@ def create_rsa_keys(target_dir: Path) -> None:
     )
 
     private_key_location = target_dir / "microdata_private_key.pem"
-    with open(private_key_location, "wb") as f:
-        f.write(microdata_private_key_pem)
+    with open(private_key_location, "wb") as file:
+        file.write(microdata_private_key_pem)
 
     print(f"Stored {private_key_location}")
 
@@ -80,7 +80,7 @@ def create_rsa_keys(target_dir: Path) -> None:
     )
 
     public_key_location = target_dir / "microdata_public_key.pem"
-    with open(public_key_location, "wb") as f:
-        f.write(microdata_public_key_pem)
+    with open(public_key_location, "wb") as file:
+        file.write(microdata_public_key_pem)
 
     print(f"Stored {public_key_location}")

@@ -79,7 +79,8 @@ def decrypt_dataset(
         2. Decrypts the dataset file using the symmetric key.
 
     :param rsa_keys_dir: directory containing private key file microdata_private_key.pem
-    :param input_dir: directory containing the encrypted dataset file (.encr) and encrypted symmetric key
+    :param input_dir: directory containing the encrypted dataset file (.encr)
+        and encrypted symmetric key
     :param output_dir: directory to decrypt to
     :return: None
     """
@@ -119,8 +120,8 @@ def decrypt_dataset(
 
     # decrypt symkey
     encrypted_symkey = input_dir / f"{dataset_name}.symkey.encr"
-    with open(encrypted_symkey, "rb") as f:
-        symkey = f.read()  # Read the bytes of the encrypted file
+    with open(encrypted_symkey, "rb") as file:
+        symkey = file.read()  # Read the bytes of the encrypted file
 
     decrypted_symkey = private_key.decrypt(
         symkey,
@@ -132,14 +133,14 @@ def decrypt_dataset(
     )
 
     # decrypt csv file
-    with open(csv_file, "rb") as f:
-        data = f.read()
+    with open(csv_file, "rb") as file:
+        data = file.read()
 
     fernet = Fernet(decrypted_symkey)
     try:
         decrypted = fernet.decrypt(data)
-        with open(output_dir / f"{dataset_name}.csv", "wb") as f:
-            f.write(decrypted)
+        with open(output_dir / f"{dataset_name}.csv", "wb") as file:
+            file.write(decrypted)
     except InvalidToken as exc:
         print(f"ERROR : {dataset_name} : Invalid key")
         raise SystemExit(1) from exc
