@@ -1,8 +1,10 @@
+__pycache__/
 .idea
 .vscode
 .python-version
 # Mac OS
 .DS_Store
+.coverage
 
 # RSA key extension
 *$.pem
