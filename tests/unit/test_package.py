@@ -40,6 +40,25 @@ def test_package_dataset():
         assert "DATASET_1.json" in tarred_files
 
 
+def test_package_dataset_just_json():
+    create_rsa_keys(target_dir=RSA_KEYS_DIRECTORY)
+
+    package_dataset(
+        rsa_keys_dir=RSA_KEYS_DIRECTORY,
+        dataset_dir=Path(f"{INPUT_DIRECTORY}/DATASET_3"),
+        output_dir=OUTPUT_DIRECTORY,
+    )
+
+    result_file = OUTPUT_DIRECTORY / "DATASET_3.tar"
+    assert result_file.exists()
+
+    assert not Path(OUTPUT_DIRECTORY / "DATASET_3").exists()
+
+    with tarfile.open(result_file, "r:") as tar:
+        tarred_files = [file.name for file in tar.getmembers()]
+        assert "DATASET_3.json" in tarred_files
+
+
 def test_package_datasets():
     create_rsa_keys(target_dir=RSA_KEYS_DIRECTORY)
 

@@ -10,7 +10,7 @@ from cryptography.hazmat.primitives.asymmetric import padding
 
 def encrypt_dataset(
     rsa_keys_dir: Path, dataset_dir: Path, output_dir: Path
-) -> str:
+) -> None:
     """
     Encrypts a dataset as follows:
         1. Generates the symmetric key for this dataset.
@@ -101,5 +101,3 @@ def encrypt_dataset(
 
     print(f"Key file for {csv_file} encrypted into {encrypted_symkey_file}")
     print("Encryption done!")
-
-    return dataset_output_dir
