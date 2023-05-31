@@ -32,10 +32,10 @@ def tar_dataset(input_dir: Path, dataset_name: str) -> None:
         input_dir / dataset_name / f"{dataset_name}.json",
     ]
 
-    json_file = input_dir / dataset_name / f"{dataset_name}.json"
-    if not json_file.exists():
-        print(f"The required file {json_file} not found")
-        raise SystemExit(1)
+    for file in files_to_tar:
+        if not file.exists():
+            print(f"The required file {file} not found")
+            raise SystemExit(1)
 
     with tarfile.open(full_tar_file_name, "w") as tar:
         for file in files_to_tar:
