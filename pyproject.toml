@@ -6,7 +6,7 @@ authors = ["microdata-developers"]
 
 [tool.poetry.dependencies]
 python = ">=3.7.2,<4.0"
-cryptography = "^40.0.0"
+cryptography = "^41.0.3"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.0.267"
