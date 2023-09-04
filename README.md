@@ -1,3 +1,9 @@
+⚠️ Deprecation Notice ⚠️
+-------------------------
+
+This package has been deprecated. Please use the [microdata-tools](https://github.com/statisticsnorway/microdata-tools)
+package.
+
 # microdata-crypt
 A repository to package datasets based on Python cryptography package.
 The datasets will be encrypted and packaged as tar archives. The process is as follows:
